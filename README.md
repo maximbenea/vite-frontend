@@ -23,20 +23,24 @@ These instructions will get you a copy of the project up and running on your loc
   
 1. Clone the repository:  
   
-    ```bash  
-  git clone https://your-repository-url.com/ ```  
+```bash
+  git clone https://your-repository-url.com/ 
+  ```  
 2. Navigate to the project directory:  
   
-    ```bash  
-  cd vite-react-frontend ```  
+```bash
+  cd vite-react-frontend 
+  ```  
 3. Install the dependencies:  
   
-    ```bash  
-  npm install ```  
+```bash
+  npm install 
+  ```  
   or  
   
-    ```bash  
-  yarn install ```  
+```bash 
+  yarn install 
+  ```  
 ## Usage  
   
 ### Development Server  
@@ -68,4 +72,10 @@ This frontend application communicates with a backend service for the following 
   
 Make sure you have the backend service running and configured to listen on `http://localhost:8000`.  
   
-
+## Linting  
+  
+To lint the codebase for any errors or style issues, run the following command:  
+  
+```bash  
+npm run lint
+```
