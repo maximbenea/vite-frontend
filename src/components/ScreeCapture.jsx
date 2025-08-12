@@ -49,21 +49,28 @@ export default function ScreenCapture() {
                 canvas.height = 720;
                 const ctx = canvas.getContext('2d');
                 setIsCapturing(true);
-                intervalRef.current = setInterval(() => {
-                    ctx.drawImage(video, 0, 0, 1280, 720);
-                    const base64Image = canvas.toDataURL('image/jpeg', 0.8);
-                    fetch('http://localhost:8000/upload-frame', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ image_base64: base64Image }),
-                    })
-                        .then(data => {
-                            console.log('Frame uploaded successfully:', data);
-                        })
-                        .catch(error => {
-                            console.error('Error uploading frame:', error);
-                        });
-                }, 10000); // 1 frame/8sec (changeable)
+                intervalRef.current = setInterval(async () => {
+                    try {
+                        const res = await fetch('https://test-api-3wb5.onrender.com/processing');
+                        const { processing } = await res.json();
+                
+                        if (!processing) {
+                            ctx.drawImage(video, 0, 0, 1280, 720);
+                            const base64Image = canvas.toDataURL('image/jpeg', 0.8);
+                
+                            await fetch('https://test-api-3wb5.onrender.com/upload-frame', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ image_base64: base64Image }),
+                            });
+                        } else {
+                            console.log("Backend is busy, skipping frame");
+                        }
+                    } catch (err) {
+                        console.error('Error checking backend state:', err);
+                    }
+                }, 10000);
+                 // 1 frame/8sec (changeable)
                 // Listen for browser 'Stop sharing' (WebRTC indicator)
                 stream.getTracks().forEach(track => {
                     track.onended = () => {
@@ -83,7 +90,7 @@ export default function ScreenCapture() {
     // Fetch chat messages from backend
     const fetchChatMessages = async () => {
         try {
-            const res = await fetch('http://localhost:8000/chat-messages');
+            const res = await fetch('https://test-api-3wb5.onrender.com/current_scent');
             const data = await res.json();
             if (typeof data.message === 'string') {
                 setChatMessages([data.message]);
