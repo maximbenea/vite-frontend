@@ -8,6 +8,10 @@
 
 .buttons {
   margin-bottom: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
 }
 
 .status-line {
@@ -52,6 +56,11 @@
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Mobile touch improvements */
+  min-height: 48px;
+  min-width: 80px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .start-btn {
@@ -153,4 +162,245 @@
   font-size: 0.97rem;
   text-align: center;
   padding: 10px 0;
-} 
+}
+
+.mobile-warning {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  color: #856404;
+  font-size: 0.9rem;
+  text-align: center;
+  animation: slideIn 0.3s ease-out;
+}
+
+.mobile-warning p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    margin: 20px auto;
+    padding: 15px;
+    max-width: 100%;
+    min-width: 100%;
+  }
+
+  .mobile-warning {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+  }
+
+  .buttons {
+    margin-bottom: 20px;
+    gap: 10px;
+  }
+
+  .start-btn, .stop-btn {
+    padding: 14px 20px;
+    font-size: 16px;
+    min-height: 52px;
+    min-width: 90px;
+    margin: 0 5px;
+  }
+
+  .status-line {
+    font-size: 0.95rem;
+    margin-bottom: 15px;
+  }
+
+  .preview {
+    margin-top: 15px;
+  }
+
+  .preview-video {
+    max-width: 100%;
+  }
+
+  .chat-window {
+    margin: 20px auto 0 auto;
+    max-width: 100%;
+  }
+
+  .chat-title {
+    padding: 10px 0 6px 0;
+    font-size: 1rem;
+  }
+
+  .chat-messages {
+    padding: 12px 15px;
+    max-height: 180px;
+
+  }
+
+  .chat-message {
+    font-size: 0.95rem;
+    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    margin: 10px auto;
+    padding: 10px;
+  }
+
+  .mobile-warning {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+    margin-bottom: 12px;
+  }
+
+  .buttons {
+    margin-bottom: 15px;
+    gap: 8px;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .start-btn, .stop-btn {
+    padding: 16px 24px;
+    font-size: 18px;
+    min-height: 56px;
+    min-width: 120px;
+    margin: 5px 0;
+    width: 100%;
+    max-width: 200px;
+  }
+
+  .status-line {
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+  }
+
+  .preview {
+    margin-top: 12px;
+  }
+
+  .chat-window {
+    margin: 15px auto 0 auto;
+  }
+
+  .chat-title {
+    padding: 8px 0 5px 0;
+    font-size: 0.95rem;
+  }
+
+  .chat-messages {
+    padding: 10px 12px;
+    max-height: 150px;
+  }
+
+  .chat-message {
+    font-size: 0.9rem;
+    padding: 5px 8px;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+  .container {
+    margin: 10px auto;
+    padding: 10px;
+  }
+
+  .buttons {
+    margin-bottom: 10px;
+  }
+
+  .preview {
+    margin-top: 10px;
+  }
+
+  .chat-window {
+    margin: 10px auto 0 auto;
+  }
+
+  .chat-messages {
+    max-height: 120px;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .start-btn, .stop-btn {
+    transition: none;
+  }
+
+  .start-btn:active:not(:disabled), .stop-btn:active:not(:disabled) {
+    transform: scale(0.98);
+    background-color: #e67e22;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .preview-video {
+    border-width: 1px;
+  }
+  
+  .chat-window {
+    border-width: 0.5px;
+  }
+}
+
+/* Dark mode support */
+/* @media (prefers-color-scheme: dark) {
+  .container {
+    background-color: #1a1a1a;
+  }
+
+  .mobile-warning {
+    background: #3a2f00;
+    border-color: #665200;
+    color: #ffd54f;
+  }
+
+  .status-line {
+    color: #ffffff;
+  }
+
+  .preview-video {
+    background-color: #2a2a2a;
+    border-color: #404040;
+  }
+
+  .chat-window {
+    background: #2a2a2a;
+    border-color: #404040;
+  }
+
+  .chat-title {
+    background: #3a3a3a;
+    border-bottom-color: #404040;
+  }
+
+  .chat-messages {
+    background: #2a2a2a;
+  }
+
+  .chat-message {
+    background: #3a3a3a;
+    color: #ffffff;
+  }
+
+  .chat-empty {
+    color: #888;
+  }
+}  */

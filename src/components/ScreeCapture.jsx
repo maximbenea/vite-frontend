@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import './ScreenCapture.css';
+import { isMobileDevice, isScreenSharingSupported, getMobileBrowser, debounce } from '../utils/mobileUtils';
 
 export default function ScreenCapture() {
     const videoRef = useRef(null);
@@ -7,10 +8,25 @@ export default function ScreenCapture() {
     const intervalRef = useRef(null);
     const [isCapturing, setIsCapturing] = useState(false);
     const [chatMessages, setChatMessages] = useState([]);
+    const [isMobile, setIsMobile] = useState(false);
+    const [showMobileWarning, setShowMobileWarning] = useState(false);
     const chatPollRef = useRef(null);
 
     // Keep a reference to the current stream for cleanup
     const streamRef = useRef(null);
+
+    // Detect mobile device
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(isMobileDevice());
+        };
+
+        checkMobile();
+        const debouncedCheckMobile = debounce(checkMobile, 250);
+        window.addEventListener('resize', debouncedCheckMobile);
+        
+        return () => window.removeEventListener('resize', debouncedCheckMobile);
+    }, []);
 
     const stopCapture = () => {
         const stream = videoRef.current?.srcObject;
@@ -36,11 +52,27 @@ export default function ScreenCapture() {
 
     const startCapture = async () => {
         try {
+            // Check if screen sharing is supported
+            if (!isScreenSharingSupported()) {
+                if (isMobile) {
+                    setShowMobileWarning(true);
+                    setTimeout(() => setShowMobileWarning(false), 5000);
+                }
+                throw new Error(`Screen sharing is not supported on ${getMobileBrowser()}`);
+            }
+
             // Getting screen access
-            const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+            const stream = await navigator.mediaDevices.getDisplayMedia({ 
+                video: {
+                    cursor: "always",
+                    displaySurface: "monitor"
+                } 
+            });
+            
             streamRef.current = stream;
             const video = videoRef.current;
             video.srcObject = stream;
+            
             video.onloadedmetadata = async () => {
                 await video.play();
                 // Set canvas resolution to 720p
@@ -49,6 +81,7 @@ export default function ScreenCapture() {
                 canvas.height = 720;
                 const ctx = canvas.getContext('2d');
                 setIsCapturing(true);
+                
                 intervalRef.current = setInterval(async () => {
                     try {
                         const res = await fetch('https://test-api-3wb5.onrender.com/processing');
@@ -69,14 +102,15 @@ export default function ScreenCapture() {
                     } catch (err) {
                         console.error('Error checking backend state:', err);
                     }
-                }, 10000);
-                 // 1 frame/8sec (changeable)
+                }, 10000); // 1 frame/10sec (changeable)
+                
                 // Listen for browser 'Stop sharing' (WebRTC indicator)
                 stream.getTracks().forEach(track => {
                     track.onended = () => {
                         stopCapture();
                     };
                 });
+                
                 // Start chat polling
                 fetchChatMessages();
                 chatPollRef.current = setInterval(fetchChatMessages, 5000);
@@ -84,6 +118,14 @@ export default function ScreenCapture() {
         } catch (err) {
             console.error('Error starting capture:', err);
             setIsCapturing(false);
+            
+            if (err.name === 'NotAllowedError') {
+                alert('Screen sharing permission was denied. Please allow screen sharing to use this feature.');
+            } else if (err.name === 'NotSupportedError') {
+                alert('Screen sharing is not supported on this device or browser. Please try using a desktop browser.');
+            } else {
+                alert('Failed to start screen capture. Please try again.');
+            }
         }
     };
 
@@ -113,37 +155,49 @@ export default function ScreenCapture() {
 
     return (
         <div className="container">
+            {showMobileWarning && (
+                <div className="mobile-warning">
+                    <p>⚠️ Screen sharing may not work properly on mobile devices. For best results, use a desktop browser.</p>
+                </div>
+            )}
+            
             <div className="buttons">
                 <button 
                     onClick={startCapture} 
                     disabled={isCapturing}
                     className="start-btn"
+                    aria-label="Start screen capture"
                 >
-                    Start
+                    {isMobile ? 'Start' : 'Start'}
                 </button>
                 <button 
                     onClick={stopCapture} 
                     disabled={!isCapturing}
                     className="stop-btn"
+                    aria-label="Stop screen capture"
                 >
-                    Stop
+                    {isMobile ? 'Stop' : 'Stop'}
                 </button>
             </div>
+            
             {isCapturing && (
                 <div className="status-line">
                     <span className="status-dot" />
                     <span className="status-text">Current status: Active</span>
                 </div>
             )}
+            
             <div className="preview">
                 <video 
                     ref={videoRef} 
                     autoPlay
                     muted
+                    playsInline
                     className="preview-video"
                     style={{ display: isCapturing ? 'block' : 'none' }}
                 />
             </div>
+            
             {isCapturing && (
                 <div className="chat-window">
                     <div className="chat-title">Chat</div>
@@ -158,6 +212,7 @@ export default function ScreenCapture() {
                     </div>
                 </div>
             )}
+            
             <canvas ref={canvasRef} style={{ display: 'none' }} />
         </div>
     );
