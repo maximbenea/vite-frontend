@@ -30,13 +30,6 @@ body {
   min-height: 100vh;
   background-color: #ffffff;
   position: relative;
-  /* Mobile touch improvements */
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
 }
 
 h1 {
@@ -57,10 +50,6 @@ button {
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  /* Mobile touch improvements */
-  min-height: 44px;
-  min-width: 44px;
-  touch-action: manipulation;
 }
 
 button:hover {
@@ -80,84 +69,3 @@ button:active {
   transform: translateY(0);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
-/* Mobile Responsive Design */
-@media (max-width: 768px) {
-  body {
-    padding: 1rem;
-    place-items: flex-start;
-    min-height: 100vh;
-  }
-
-  h1 {
-    font-size: 2.4em;
-    margin-bottom: 1rem;
-  }
-
-  button {
-    padding: 1em 1.2em;
-    font-size: 1.1em;
-    min-height: 48px;
-    min-width: 48px;
-  }
-}
-
-@media (max-width: 480px) {
-  body {
-    padding: 0.5rem;
-  }
-
-  h1 {
-    font-size: 2em;
-  }
-
-  button {
-    padding: 1.2em 1em;
-    font-size: 1.2em;
-    min-height: 52px;
-    min-width: 52px;
-    margin: 0.5rem;
-  }
-}
-
-/* Landscape orientation adjustments */
-@media (max-height: 500px) and (orientation: landscape) {
-  body {
-    padding: 0.5rem;
-  }
-  
-  h1 {
-    font-size: 1.8em;
-    margin-bottom: 0.5rem;
-  }
-}
-
-/* High DPI displays */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  button {
-    border-width: 0.5px;
-  }
-}
-
-/* Dark mode support */
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-    color: #ffffff;
-    background-color: #1a1a1a;
-  }
-  
-  body {
-    background-color: #1a1a1a;
-  }
-  
-  button {
-    background: #2a2a2a;
-    color: #ffffff;
-    border-color: #404040;
-  }
-  
-  button:hover {
-    background: #3a3a3a;
-  }
-} */
