@@ -20,6 +20,12 @@ export default function ScreenCapture() {
     // Websockets handling
     const connectWebsocket = () => {
         try {
+            // Close existing connection if any
+            if (chatWebSocketRef.current && chatWebSocketRef.current.readyState === WebSocket.OPEN) {
+                console.log('Closing existing WebSocket connection');
+                chatWebSocketRef.current.close();
+            }
+
             const WS_URL = "wss://fastapi-backend-i18f.onrender.com/ws/web";      // Change later in production
             chatWebSocketRef.current = new WebSocket(WS_URL);    // Reference to current connection
 
@@ -41,8 +47,12 @@ export default function ScreenCapture() {
             };
 
             chatWebSocketRef.current.onclose = () => {
-                console.log('WebSocket closed, attempting to reconnect ...');
-                setTimeout(connectWebsocket, 2000);
+                console.log('WebSocket closed');
+                // Only attempt to reconnect if we're still capturing
+                if (isCapturing) {
+                    console.log('Attempting to reconnect...');
+                    setTimeout(connectWebsocket, 2000);
+                }
             };
 
             chatWebSocketRef.current.onerror = (e) => {
@@ -55,9 +65,12 @@ export default function ScreenCapture() {
 
     const disconnectWebsocket = () => {
         if (chatWebSocketRef.current) {
+            // Remove the onclose handler to prevent reconnection
+            chatWebSocketRef.current.onclose = null;
             // Close the current session
             chatWebSocketRef.current.close();
             chatWebSocketRef.current = null;
+            console.log('WebSocket disconnected');
         }
     }
 
