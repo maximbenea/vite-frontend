@@ -26,7 +26,7 @@ export default function ScreenCapture() {
                 chatWebSocketRef.current.close();
             }
 
-            const WS_URL = "wss://fastapi-backend-us.onrender.com/ws/web";      // Change later in production
+            const WS_URL = "wss://fastapi-backend-i18f.onrender.com/ws/web";      // Change later in production
             chatWebSocketRef.current = new WebSocket(WS_URL);    // Reference to current connection
 
             chatWebSocketRef.current.onopen = () => {
@@ -169,7 +169,7 @@ export default function ScreenCapture() {
                             // Lower the quality for faster processing
                             const base64Image = optimizedCanvas.toDataURL('image/jpeg', 0.6);
 
-                            await fetch('https://fastapi-backend-us.onrender.com/upload-frame', {
+                            await fetch('https://fastapi-backend-i18f.onrender.com/upload-frame', {
                                 method: 'POST',
                                 headers: {'Content-Type': 'application/json'},
                                 body: JSON.stringify({image_base64: base64Image}),
