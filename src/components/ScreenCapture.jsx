@@ -104,6 +104,12 @@ export default function ScreenCapture() {
         if (videoRef.current) {
             videoRef.current.srcObject = null;
         }
+
+        // Clear the last frame from memory so the next stream starts fresh
+        lastFrameRef.current = null;
+        // Clear chat history
+        setChatMessages([]);
+
         // Remove event listeners from previous stream
         if (streamRef.current) {
             streamRef.current.getTracks().forEach(track => {
